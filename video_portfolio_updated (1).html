@@ -225,10 +225,13 @@
   <section id="film">
     <h2 class="section-title">Short Film Project</h2>
     <div class="video-frame">
-      <video class="film-video" controls preload="metadata" poster="">
-        <source src="C:\Users\hnkru\OneDrive\Desktop\portfolio\blurrr'.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
+      <iframe 
+        class="film-video" 
+        src="https://www.youtube.com/embed/NUjeF-o4xCM?modestbranding=1&rel=0&showinfo=0" 
+        allowfullscreen
+        frameborder="0"
+        loading="lazy">
+      </iframe>
     </div>
   </section>
 
@@ -267,23 +270,16 @@
   <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    // Wait for Swiper to load
+    // Wait for page to load
     function initializePortfolio() {
-      // Check if Swiper is available
-      if (typeof Swiper === 'undefined') {
-        console.log('Swiper not loaded yet, retrying...');
-        setTimeout(initializePortfolio, 100);
-        return;
-      }
-
-      // Array of video paths
-      const videoPaths = [
-        "C:\\Users\\hnkru\\OneDrive\\Desktop\\portfolio\\brocode2.mp4",
-        "C:\\Users\\hnkru\\OneDrive\\Desktop\\portfolio\\brocode3.mp4",
-        "C:\\Users\\hnkru\\OneDrive\\Desktop\\portfolio\\ep5.mp4",
-        "C:\\Users\\hnkru\\OneDrive\\Desktop\\portfolio\\EPISODE1.mp4",
-        "C:\\Users\\hnkru\\OneDrive\\Desktop\\portfolio\\reelSS.mp4",
-        "C:\\Users\\hnkru\\OneDrive\\Desktop\\portfolio\\video5.mp4"
+      // Array of YouTube video IDs extracted from your links
+      const youtubeVideos = [
+        "jvxA_00g3qE",
+        "O2In0EZwbBo", 
+        "ZnkU-4y-XvI",
+        "UnkzCj1au5U",
+        "YEPY9q5msFk",
+        "-csnTjNpeAw"
       ];
 
       // Shuffle function
@@ -304,18 +300,20 @@
           return;
         }
         
-        const shuffledVideos = shuffleArray(videoPaths);
+        const shuffledVideos = shuffleArray(youtubeVideos);
         wrapper.innerHTML = ''; // Clear existing content
         
-        shuffledVideos.forEach((videoPath, index) => {
+        shuffledVideos.forEach((videoId, index) => {
           const slide = document.createElement('div');
           slide.className = 'swiper-slide';
           slide.innerHTML = `
             <div class="video-frame">
-              <video class="reel-video" controls preload="metadata" poster="">
-                <source src="${videoPath}" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
+              <iframe 
+                src="https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0&showinfo=0" 
+                allowfullscreen
+                frameborder="0"
+                loading="lazy">
+              </iframe>
             </div>
           `;
           wrapper.appendChild(slide);
@@ -325,6 +323,13 @@
       // Create video slides
       createVideoSlides();
       
+      // Check if Swiper is available
+      if (typeof Swiper === 'undefined') {
+        console.log('Swiper not loaded yet, retrying...');
+        setTimeout(initializePortfolio, 100);
+        return;
+      }
+      
       // Initialize Swiper after videos are created
       const swiper = new Swiper('.swiper-container', {
         slidesPerView: 3,
@@ -332,7 +337,7 @@
         centeredSlides: true,
         loop: true,
         autoplay: {
-          delay: 5000,
+          delay: 6000,
           disableOnInteraction: false,
         },
         pagination: {
@@ -358,23 +363,6 @@
           }
         }
       });
-
-      // Pause other videos when one starts playing
-      function setupVideoControls() {
-        const videos = document.querySelectorAll('video');
-        videos.forEach(video => {
-          video.addEventListener('play', () => {
-            videos.forEach(otherVideo => {
-              if (otherVideo !== video) {
-                otherVideo.pause();
-              }
-            });
-          });
-        });
-      }
-
-      // Setup video controls after swiper is initialized
-      setTimeout(setupVideoControls, 200);
 
       // Smooth scrolling for navigation
       document.querySelectorAll('.nav-button').forEach(button => {
