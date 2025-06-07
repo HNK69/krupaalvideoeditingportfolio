@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krupaal | Visual Alchemist</title>
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #0d0d0d 0%, #0a0f1a 40%, #000 75%),
+                  linear-gradient(135deg, rgba(255, 0, 0, 0.2) 10%, transparent 50%, rgba(255, 0, 0, 0.1) 90%);
+      background-blend-mode: screen, normal;
+      background-attachment: fixed;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    
+    /* Loading animation */
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    
+    .loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid #f9d423;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    header {
+      text-align: center;
+      padding: 4rem 2rem 2rem;
+      position: relative;
+    }
+    
+    header h1 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      background: linear-gradient(90deg, #ffe259, #ffa751);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glow 2s infinite alternate;
+      font-weight: 700;
+    }
+    
+    @keyframes glow {
+      from { 
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+      }
+      to { 
+        filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.8));
+      }
+    }
+    
+    .tagline {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      margin-top: 0.5rem;
+      color: #ccc;
+      font-weight: 300;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2rem auto;
+      flex-wrap: wrap;
+      max-width: 800px;
+    }
+    
+    .nav-button {
+      padding: 0.9rem 2rem;
+      background: linear-gradient(135deg, #f9d423, #ff4e50);
+      color: #000;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 30px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(249, 212, 35, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+    
+    .nav-button:hover {
+      transform: translateY(-2px) scale(1.05);
+      background: linear-gradient(135deg, #ffe259, #ffa751);
+      box-shadow: 0 8px 25px rgba(249, 212, 35, 0.5);
+    }
+    
+    section {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      margin-bottom: 3rem;
+      background: linear-gradient(90deg, #fff, #f9d423);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 600;
+    }
+    
+    /* Swiper Styles */
+    .swiper-container {
+      width: 100%;
+      padding: 2rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .swiper-slide {
+      width: 300px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .video-frame {
+      position: relative;
+      background: #111;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .video-frame:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(249, 212, 35, 0.2);
+      border-color: rgba(249, 212, 35, 0.3);
+    }
+    
+    .video-frame iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+      display: block;
+    }
+    
+    .film-video {
+      aspect-ratio: 16/9;
+      width: 100%;
+      max-width: 800px;
+      height: 450px;
+      margin: 0 auto;
+      display: block;
+    }
+    
+    .swiper-pagination-bullet {
+      background: rgba(249, 212, 35, 0.5);
+      width: 12px;
+      height: 12px;
+      opacity: 0.7;
+    }
+    
+    .swiper-pagination-bullet-active {
+      background: #f9d423;
+      opacity: 1;
+      transform: scale(1.2);
+    }
+    
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #f9d423;
+      background: rgba(0, 0, 0, 0.7);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(249, 212, 35, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover {
+      background: rgba(249, 212, 35, 0.2);
+      transform: scale(1.1);
+      border-color: rgba(249, 212, 35, 0.8);
+    }
+    
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(249, 212, 35, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .card:hover::before {
+      left: 100%;
+    }
+    
+    .card:hover {
+      transform: translateY(-15px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(249, 212, 35, 0.3);
+      box-shadow: 0 20px 40px rgba(249, 212, 35, 0.1);
+    }
+    
+    .card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: #f9d423;
+      font-weight: 600;
+    }
+    
+    .card p {
+      color: #ccc;
+      line-height: 1.8;
+    }
+    
+    #about p {
+      text-align: center;
+      font-size: 1.2rem;
+      line-height: 2;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #ddd;
+    }
+    
+    #contact p {
+      text-align: center;
+      font-size: 1.2rem;
+      line-height: 2.5;
+      color: #ddd;
+    }
+    
+    #contact a {
+      color: #f9d423;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    #contact a:hover {
+      color: #ffe259;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: 0.9rem;
+      color: #666;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Error state */
+    .error-message {
+      text-align: center;
+      color: #ff6b6b;
+      padding: 2rem;
+      background: rgba(255, 107, 107, 0.1);
+      border-radius: 10px;
+      margin: 1rem 0;
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        padding: 3rem 1rem 2rem;
+      }
+      
+      .nav-buttons {
+        gap: 1rem;
+        padding: 0 1rem;
+      }
+      
+      .nav-button {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.9rem;
+      }
+      
+      section {
+        padding: 3rem 1rem;
+      }
+      
+      .video-frame iframe {
+        height: 350px;
+      }
+      
+      .film-video {
+        height: 250px;
+      }
+      
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .swiper-slide {
+        width: 280px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .swiper-slide {
+        width: 250px;
+      }
+      
+      .video-frame iframe {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <header>
+    <h1>Krupaal: Visual Alchemist</h1>
+    <p class="tagline">Crafting Impactful Short-Form Stories for the Digital Era</p>
+  </header>
+
+  <div class="nav-buttons">
+    <a class="nav-button" href="#about">🧠 About</a>
+    <a class="nav-button" href="#reels">🎬 Short Reels</a>
+    <a class="nav-button" href="#film">🎞️ Short Film</a>
+    <a class="nav-button" href="#skills">🚀 Skills</a>
+    <a class="nav-button" href="#contact">💌 Connect</a>
+  </div>
+
+  <section id="about">
+    <h2 class="section-title">Who Am I?</h2>
+    <p>
+      A creator driven by visuals and rhythm, I turn raw clips into digital gold.
+      With over a year of experience in short-form editing, I elevate brand voices, creators, and stories.
+      Every frame tells a story, every cut builds emotion, and every project pushes creative boundaries.
+    </p>
+  </section>
+
+  <section id="reels">
+    <h2 class="section-title">Short Reels Showcase</h2>
+    <div class="swiper-container" id="reels-swiper">
+      <div class="swiper-wrapper" id="reels-wrapper">
+        <!-- Videos will be dynamically inserted here -->
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  </section>
+
+  <section id="film">
+    <h2 class="section-title">Short Film Project</h2>
+    <div class="video-frame">
+      <iframe 
+        class="film-video" 
+        src="https://www.youtube.com/embed/NUjeF-o4xCM?modestbranding=1&rel=0&showinfo=0&autoplay=0" 
+        title="Short Film"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+    </div>
+  </section>
+
+  <section id="skills">
+    <h2 class="section-title">Expertise</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>🎬 Premiere Pro Mastery</h3>
+        <p>Advanced timeline editing, multi-cam sync, seamless transitions, and professional workflow optimization</p>
+      </div>
+      <div class="card">
+        <h3>✨ After Effects Wizardry</h3>
+        <p>Motion graphics, visual effects, dynamic animations, and composite mastery</p>
+      </div>
+      <div class="card">
+        <h3>🎨 Color Grading (DaVinci)</h3>
+        <p>Professional color correction, cinematic look development, and mood enhancement</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2 class="section-title">Let's Create Something Stunning</h2>
+    <p>
+      📧 Email: <a href="mailto:hnkrupaal@gmail.com">hnkrupaal@gmail.com</a><br>
+      📱 Phone: <a href="tel:+919110614561">9110614561</a>
+    </p>
+  </section>
+
+  <footer>
+    &copy; 2025 Krupaal. All Rights Reserved. | Visual Storytelling Redefined
+  </footer>
+
+  <!-- Swiper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+  <script>
+    // Portfolio initialization with better error handling
+    class KrupaalPortfolio {
+      constructor() {
+        this.youtubeVideos = [
+          "jvxA_00g3qE",
+          "O2In0EZwbBo", 
+          "ZnkU-4y-XvI",
+          "UnkzCj1au5U",
+          "YEPY9q5msFk",
+          "-csnTjNpeAw"
+        ];
+        this.swiper = null;
+        this.init();
+      }
+      
+      async init() {
+        try {
+          await this.waitForDependencies();
+          this.createVideoSlides();
+          this.initializeSwiper();
+          this.setupNavigation();
+          this.hideLoading();
+        } catch (error) {
+          console.error('Portfolio initialization failed:', error);
+          this.showError('Failed to load portfolio. Please refresh the page.');
+          this.hideLoading();
+        }
+      }
+      
+      waitForDependencies() {
+        return new Promise((resolve, reject) => {
+          let attempts = 0;
+          const maxAttempts = 50;
+          
+          const checkDependencies = () => {
+            if (typeof Swiper !== 'undefined') {
+              resolve();
+            } else if (attempts >= maxAttempts) {
+              reject(new Error('Swiper library failed to load'));
+            } else {
+              attempts++;
+              setTimeout(checkDependencies, 100);
+            }
+          };
+          
+          checkDependencies();
+        });
+      }
+      
+      shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+      
+      createVideoSlides() {
+        const wrapper = document.getElementById('reels-wrapper');
+        if (!wrapper) {
+          throw new Error('Reels wrapper not found');
+        }
+        
+        const shuffledVideos = this.shuffleArray(this.youtubeVideos);
+        wrapper.innerHTML = '';
+        
+        shuffledVideos.forEach((videoId) => {
+          const slide = document.createElement('div');
+          slide.className = 'swiper-slide';
+          slide.innerHTML = `
+            <div class="video-frame">
+              <iframe 
+                src="https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0&showinfo=0&autoplay=0" 
+                title="Short Reel"
+                allowfullscreen
+                loading="lazy"
+                onload="this.style.opacity='1'"
+                style="opacity:0;transition:opacity 0.3s ease">
+              </iframe>
+            </div>
+          `;
+          wrapper.appendChild(slide);
+        });
+      }
+      
+      initializeSwiper() {
+        const container = document.querySelector('.swiper-container');
+        if (!container) {
+          throw new Error('Swiper container not found');
+        }
+        
+        this.swiper = new Swiper('.swiper-container', {
+          slidesPerView: 1,
+          spaceBetween: 20,
+          centeredSlides: true,
+          loop: true,
+          autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          },
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+            dynamicBullets: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+          breakpoints: {
+            480: {
+              slidesPerView: 1,
+              spaceBetween: 20,
+            },
+            768: {
+              slidesPerView: 2,
+              spaceBetween: 25,
+            },
+            1024: {
+              slidesPerView: 3,
+              spaceBetween: 30,
+            }
+          },
+          on: {
+            init: function() {
+              console.log('Swiper initialized successfully');
+            },
+            slideChange: function() {
+              // Pause videos in non-active slides
+              this.slides.forEach((slide, index) => {
+                const iframe = slide.querySelector('iframe');
+                if (iframe && index !== this.activeIndex) {
+                  iframe.src = iframe.src; // Reset iframe to pause video
+                }
+              });
+            }
+          }
+        });
+      }
+      
+      setupNavigation() {
+        document.querySelectorAll('.nav-button').forEach(button => {
+          button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = button.getAttribute('href');
+            const target = document.querySelector(targetId);
+            
+            if (target) {
+              const headerOffset = 80;
+              const elementPosition = target.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+              
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
+      }
+      
+      hideLoading() {
+        const loading = document.getElementById('loading');
+        if (loading) {
+          setTimeout(() => {
+            loading.classList.add('hidden');
+            setTimeout(() => {
+              loading.style.display = 'none';
+            }, 500);
+          }, 1000);
+        }
+      }
+      
+      showError(message) {
+        const reelsSection = document.getElementById('reels');
+        if (reelsSection) {
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-message';
+          errorDiv.innerHTML = `<p>${message}</p>`;
+          reelsSection.appendChild(errorDiv);
+        }
+      }
+    }
+    
+    // Initialize portfolio when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        new KrupaalPortfolio();
+      });
+    } else {
+      new KrupaalPortfolio();
+    }
+    
+    // Add intersection observer for animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+    
+    // Observe elements for scroll animations
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('section');
+      sections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(section);
+      });
+    });
+  </script>
+</body>
+</html>
